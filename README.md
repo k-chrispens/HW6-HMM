@@ -1,4 +1,7 @@
+
+
 # HW6-HMM
+![](https://github.com/KCore1/HW6-HMM/workflows/Project%20Tests/badge.svg)
 
 In this assignment, you'll implement the Forward and Viterbi Algorithms (dynamic programming). 
 
