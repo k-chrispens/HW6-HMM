@@ -45,7 +45,18 @@ Within your code, consider the scope of the inputs and how the different paramet
 Finally, please update your README with a brief description of your methods. 
 
 ## Methods Description
+**Forward Algorithm**
+The forward algorithm is implemented in hmm.forward. The forward algorithm utilizes dynamic programming to compute the probability of the input observation sequence given the model. The algorithm is implemented using the following steps:
+1. Initialize the forward variable (alpha) with the prior probabilities of the hidden states and the emission probabilities of the first observation state.
+2. Iterate through the observation sequence and compute the probability of the observation state for each hidden state at each step using the transition probabilities, the possible previous hidden state (this is where the Markov property comes in) and the emission probabilities.
+3. The final probability is the sum of the probabilities of the observation state for each possible hidden state at the last state in the observation sequence.
 
+**Viterbi Algorithm**
+The Viterbi algorithm is implemented in hmm.viterbi. The Viterbi algorithm utilizes dynamic programming (once again!) to compute the most likely sequence of hidden states given the observation sequence and the model. The algorithm is implemented using the following steps:
+1. Initialize the Viterbi table with the prior probabilities of the hidden states and the emission probabilities of the first observation state.
+2. Iterate through the observation sequence and compute the probability of the observation state for each hidden state at each step using the transition probabilities, the possible previous hidden state and the emission probabilities (like the forward algorithm). Also keep track of the hidden state that the most likely hidden state at the given step came from in the backpointer table.
+3. The most likely sequence of hidden states is the sequence of hidden states that maximizes the probability of the observation sequence given the model. This is computed by backtracking through the backpointer table and selecting the hidden state that maximizes the probability of the observation state at each step.
+4. Return the most likely sequence of hidden states.
 
 
 ## Task List
