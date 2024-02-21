@@ -25,16 +25,42 @@ class HiddenMarkovModel:
             transition_p (np.ndarray): transition probabilites between hidden states
             emission_p (np.ndarray): emission probabilites from transition to hidden states
         """
-
+        if not isinstance(observation_states, np.ndarray):
+            raise ValueError("Observation states must be a numpy array")
         self.observation_states = observation_states
         self.observation_states_dict = {
             state: index for index, state in enumerate(list(self.observation_states))
         }
 
+        if not isinstance(hidden_states, np.ndarray):
+            raise ValueError("Hidden states must be a numpy array")
         self.hidden_states = hidden_states
         self.hidden_states_dict = {
             index: state for index, state in enumerate(list(self.hidden_states))
         }
+
+        if (
+            not isinstance(prior_p, np.ndarray)
+            and isinstance(transition_p, np.ndarray)
+            and isinstance(emission_p, np.ndarray)
+        ):
+            raise ValueError("Probabilities must be a numpy array")
+        if prior_p.shape[0] != len(hidden_states):
+            raise ValueError(
+                "Prior probabilities must have the same length as hidden states"
+            )
+        if transition_p.shape[0] != len(hidden_states) and transition_p.shape[1] != len(
+            hidden_states
+        ):
+            raise ValueError(
+                "Transition probabilities must have the same length as hidden states"
+            )
+        if emission_p.shape[0] != len(hidden_states) and emission_p.shape[1] != len(
+            observation_states
+        ):
+            raise ValueError(
+                "Emission probabilities must have the same length as hidden states and observation states"
+            )
 
         self.prior_p = prior_p
         self.transition_p = transition_p
@@ -52,6 +78,17 @@ class HiddenMarkovModel:
         Returns:
             forward_probability (float): forward probability (likelihood) for the input observed sequence
         """
+        if len(input_observation_states) == 0:
+            raise ValueError("Input observation sequence cannot be empty")
+        if not isinstance(input_observation_states, np.ndarray):
+            raise ValueError("Input observation sequence must be a numpy array")
+        if not all(
+            input_observation_states[i] in self.observation_states
+            for i in range(len(input_observation_states))
+        ):
+            raise ValueError(
+                "Input observation sequence contains invalid observation states"
+            )
 
         # Step 1. Initialize variables
         O = len(input_observation_states)
@@ -77,8 +114,6 @@ class HiddenMarkovModel:
 
     def viterbi(self, decode_observation_states: np.ndarray) -> list:
         """
-        TODO
-
         This function runs the viterbi algorithm on an input sequence of observation states
 
         Args:
@@ -87,7 +122,17 @@ class HiddenMarkovModel:
         Returns:
             best_hidden_state_sequence(list): most likely list of hidden states that generated the sequence observed states
         """
-
+        if len(decode_observation_states) == 0:
+            raise ValueError("Observation sequence to decode cannot be empty")
+        if not isinstance(decode_observation_states, np.ndarray):
+            raise ValueError("Observation sequence to decode must be a numpy array")
+        if not all(
+            decode_observation_states[i] in self.observation_states
+            for i in range(len(decode_observation_states))
+        ):
+            raise ValueError(
+                "Observation sequence to decode contains invalid observation states"
+            )
         # Step 1. Initialize variables
         O = len(decode_observation_states)
         S = len(self.hidden_states)

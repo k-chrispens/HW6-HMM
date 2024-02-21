@@ -19,23 +19,31 @@ def test_mini_weather():
     mini_hmm = np.load("./data/mini_weather_hmm.npz")
     mini_input = np.load("./data/mini_weather_sequences.npz")
 
-    hmm = HiddenMarkovModel(mini_hmm['observation_states'], mini_hmm['hidden_states'], mini_hmm['prior_p'], mini_hmm['transition_p'], mini_hmm['emission_p'])
-    forward = hmm.forward(mini_input['observation_state_sequence'])
-    viterbi = hmm.viterbi(mini_input['observation_state_sequence'])
+    hmm = HiddenMarkovModel(
+        mini_hmm["observation_states"],
+        mini_hmm["hidden_states"],
+        mini_hmm["prior_p"],
+        mini_hmm["transition_p"],
+        mini_hmm["emission_p"],
+    )
+    forward = hmm.forward(mini_input["observation_state_sequence"])
+    viterbi = hmm.viterbi(mini_input["observation_state_sequence"])
 
-    # TODO: calculate actual forward probability
-    # assert forward == 
-    assert np.all(viterbi == mini_input['best_hidden_state_sequence'])
+    # Calculated actual forward probability, compare with forward
+    assert np.isclose(forward, 0.0350644116, atol=1e-6)
+    assert np.all(viterbi == mini_input["best_hidden_state_sequence"])
 
     # Edge case 1: empty observation sequence
-    # forward = hmm.forward(np.array([]))
-    # assert forward == 0
+    with pytest.raises(ValueError):
+        forward = hmm.forward(np.array([]))
 
-    # Edge case 2: observation sequence with only one observation
-    # forward = hmm.forward(np.array([0]))
-    # assert forward == 0.0
+    # Edge case 2: observation sequence is not numpy array
+    with pytest.raises(ValueError):
+        forward = hmm.forward([1, 2, 3])
 
-    # TODO: add more edge cases
+    # Edge case 3: observation sequence contains invalid observation states
+    with pytest.raises(ValueError):
+        forward = hmm.forward(np.array([1, 2, 3, 4, 5]))
 
 
 def test_full_weather():
@@ -50,9 +58,26 @@ def test_full_weather():
     full_hmm = np.load("./data/full_weather_hmm.npz")
     full_input = np.load("./data/full_weather_sequences.npz")
 
-    hmm = HiddenMarkovModel(full_hmm['observation_states'], full_hmm['hidden_states'], full_hmm['prior_p'], full_hmm['transition_p'], full_hmm['emission_p'])
-    forward = hmm.forward(full_input['observation_state_sequence'])
-    viterbi = hmm.viterbi(full_input['observation_state_sequence'])
+    hmm = HiddenMarkovModel(
+        full_hmm["observation_states"],
+        full_hmm["hidden_states"],
+        full_hmm["prior_p"],
+        full_hmm["transition_p"],
+        full_hmm["emission_p"],
+    )
+    forward = hmm.forward(full_input["observation_state_sequence"])
+    viterbi = hmm.viterbi(full_input["observation_state_sequence"])
 
-    assert np.all(viterbi == full_input['best_hidden_state_sequence'])
-    
+    assert np.all(viterbi == full_input["best_hidden_state_sequence"])
+
+
+if __name__ == "__main__":
+    # Get data to manually calculate forward probability
+    mini_hmm = np.load("./data/mini_weather_hmm.npz")
+    mini_input = np.load("./data/mini_weather_sequences.npz")
+    print("observed sequence", mini_input["observation_state_sequence"])
+    print("possible observations", mini_hmm["observation_states"])
+    print("possible hidden states", mini_hmm["hidden_states"])
+    print("prior probabilities", mini_hmm["prior_p"])
+    print("transition probabilities", mini_hmm["transition_p"])
+    print("emission probabilities", mini_hmm["emission_p"])
