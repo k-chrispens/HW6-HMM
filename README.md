@@ -74,7 +74,7 @@ The Viterbi algorithm is implemented in hmm.viterbi. The Viterbi algorithm utili
   [x] Account for edge cases 
 
 [TODO] Packaging <br>
-  [ ] Update README with description of your methods <br>
+  [x] Update README with description of your methods <br>
   [x] pip installable module (optional)<br>
   [x] github actions (install + pytest) (optional)
 
